@@ -16,6 +16,12 @@ const getAllPokemon = catchErrors(async () => {
         return json
 })
 
+const getPokemon = catchErrors(async (pokemon = '1') => {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`)
+    const json = await res.json()
+    return json
+})
+
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')))
 app.engine('.hbs', exphbs.engine({ extname: '.hbs' }))
@@ -26,10 +32,11 @@ app.get('/', catchErrors(async (req, res) => {
         res.render('home', { pokemons })
     }))
 
-app.get('/:title', (req, res) => {
-    const title = req.params.title
-    res.render('about', { title, subtitle: `Ma page ${title}`})
-})
+app.get('/:pokemon', catchErrors(async (req, res) => {
+    const search = req.params.pokemon
+    const pokemon = await getPokemon(search)
+    res.render('pokemon', { pokemon })
+}))
 
 // Ecoute du serveur
 app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`))
