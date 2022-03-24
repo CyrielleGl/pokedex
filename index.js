@@ -2,6 +2,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const fetch = require('node-fetch')
 const path = require('path')
+const bodyParser = require('body-parser')
 const helpers = require('handlebars-helpers')(['string'])
 
 const PORT = process.env.PORT || 5003
@@ -27,11 +28,17 @@ const getPokemon = catchErrors(async (pokemon = '1') => {
 app.use(express.static(path.join(__dirname, 'public')))
 app.engine('.hbs', exphbs.engine({ extname: '.hbs' }))
 app.set('view engine', '.hbs')
+app.use(bodyParser.urlencoded({ extended: false }))
 
 app.get('/', catchErrors(async (req, res) => {
         const pokemons = await getAllPokemon()
         res.render('home', { pokemons })
     }))
+
+app.post('/search', (req, res) => {
+    const searchName = req.body.searchName
+    res.redirect(`/${searchName}`)
+})
 
 app.get('/notFound', (req, res) => res.render('notFound'))
 
