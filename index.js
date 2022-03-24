@@ -2,6 +2,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const fetch = require('node-fetch')
 const path = require('path')
+const helpers = require('handlebars-helpers')(['string'])
 
 const PORT = process.env.PORT || 5003
 
@@ -12,7 +13,7 @@ const catchErrors = asyncFunction => (...args) => asyncFunction(...args).catch(c
 const getAllPokemon = catchErrors(async () => {
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151')
         const json = await res.json()
-        console.table(json.results)
+        // console.table(json.results)
         return json
 })
 
